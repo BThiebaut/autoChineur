@@ -1,0 +1,6 @@
+{
+  "watch": ["src"], 
+  "ext": "*",
+  "ignore": ["dist"],
+  "exec": "npx tsc && node dist/app.js"
+}

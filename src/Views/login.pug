@@ -1,0 +1,18 @@
+extends _layout.pug
+
+block content
+    div.row.vertical-center
+        div.col-sm-4
+        div(id="login-form").col-sm-4
+            h3 Login
+            form(action="/login" method="post")
+                div.input-group
+                    span.input-group-text
+                        i.fa.fa-envelope-o
+                    input(class="form-control" id="mail" type="text" name=mailField placeholder="Mail" required)
+                if message
+                    div(class="alert alert-info") #{message}
+                button(type="submit" value="login" class="btn btn-primary btn-block mt-3")
+                    i.fa.fa-send
+                    span Envoyer un lien de connexion
+        div.col-sm-4
