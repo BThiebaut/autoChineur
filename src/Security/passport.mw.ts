@@ -58,9 +58,16 @@ export function initPassport(app: Express) {
 
 }
 
-export function isAuthenticated(req: Request ,res: Response, next: NextFunction): Response | void {
+export function isAuthenticated(req: Request, res: Response, next: NextFunction){
     if(req.user)
         return next();
     else
-        res.redirect("/");
+        res.redirect("/login");
+}
+
+export function isLocalDev(req: Request, res: Response, next: NextFunction){
+    if (req.headers.host.indexOf('localhost') > -1){
+        return next();
+    }
+    res.redirect("/login");
 }

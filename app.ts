@@ -13,6 +13,7 @@ import LoginController from "./src/Controller/LoginController";
 import MailService from "./src/Services/MailService";
 import HomeController from "./src/Controller/HomeController";
 import { initPassport } from "./src/Security/passport.mw"
+import TestController from "./src/Controller/TestController";
 
 const SqliteStore = StoreFactory(session);
 
@@ -50,6 +51,10 @@ const mailService = new MailService();
 Server.addController(new LoginController(mailService));
 Server.addController(new HomeController());
 // -CONTROLLERS
+
+// DEBUG
+Server.addController(new TestController(mailService));
+// -DEBUG
 
 // SERVER START
 Server.listen();
