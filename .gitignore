@@ -4,3 +4,4 @@ node_modules
 prisma/db
 prisma/prisma
 dist
+id_ben*

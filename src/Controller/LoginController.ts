@@ -1,14 +1,15 @@
 import Server from "../Server";
 import express, { Express, Request, Response} from 'express';
 import BaseController from "./BaseController";
-import {User} from "../../prisma/prisma";
-import jwt from "jsonwebtoken"
-import pug from "pug"
+import MailService from "../Services/MailService";
 
 export default class LoginController extends BaseController
 {
-    constructor() {
+    private mailService: MailService;
+
+    constructor(mailService: MailService) {
         super();
+        this.mailService = mailService;
     }
     public register() {
 
@@ -27,7 +28,7 @@ export default class LoginController extends BaseController
                 }
             })
             if (user) {
-                await this.sendAuthMail(user);
+                await this.mailService.sendAuthMail(user);
             }
 
             res.render('login', {
@@ -37,22 +38,6 @@ export default class LoginController extends BaseController
         });
     }
 
-    private async sendAuthMail(user: User): Promise<boolean>
-    {
-        const payload = {
-            email: user.email,
-            id: user.id,
-        };
-        const token = jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
-        const url = `${Server.http.protocol}://${Server.http.host}/login?token=${token}`;
-        const content = pug.render('mails/loginMail.pug', {
-           url: url
-        });
-        const res = await Server.sendMail("Connexion token", user.email, content);
-        if (res){
-            return true;
-        }
-        return false;
-    }
+
 
 }

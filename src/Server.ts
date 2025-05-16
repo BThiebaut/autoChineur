@@ -2,7 +2,7 @@ import express, {NextFunction, Request, Response} from 'express';
 import Utils from "./Utils/Utils";
 import path from "path";
 import passport from "passport";
-import JwtStrategy from 'passport-jwt';
+
 import { PrismaClient } from '../prisma/prisma'
 import bodyParser from "body-parser";
 import flash from 'express-flash';
@@ -19,7 +19,6 @@ export default class Server
     public static httpServer;
     public static httpsServer;
     public static user = null;
-    public static mailer: nodemailer.Transporter;
     public static http = {
         host : null,
         protocol: null
@@ -78,83 +77,9 @@ export default class Server
            });
            next();
         });
-
-        passport.use('local-jwt', new JwtStrategy.Strategy({
-            secretOrKey : process.env.TOKEN_SECRET,
-            jwtFromRequest : (req) => {
-                return req.params.token;
-            }
-        }, async (data, done) => {
-            const prisma = new PrismaClient();
-            await prisma.$connect();
-
-            const user = await prisma.user.findUnique({
-                where: {
-                    id : data.id,
-                }
-            });
-            if (!user){
-                return done(null, false, { message : 'Invalid token, login again to refresh' });
-            }
-
-            await prisma.$disconnect();
-            return done(null, user);
-        }));
-
-        passport.serializeUser((user, done) => {
-            done(null, user.id);
-        });
-
-        passport.deserializeUser(async (id, done) => {
-            const prisma = new PrismaClient();
-            await prisma.$connect();
-
-            const user = await prisma.user.findUnique({
-                where: {
-                    id : id,
-                }
-            });
-
-            await prisma.$disconnect();
-            done(null, user);
-        });
-
-        const transportOptions: SMTPTransport.Options = {
-            host: process.env.SMTP_HOST,
-            port: parseInt(process.env.SMTP_PORT),
-            secure: true,
-            auth : {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASSWORD
-            }
-        }
-
-        Server.mailer = nodemailer.createTransport(transportOptions);
-
     }
 
-    public static async sendMail(subject: string, to: string, content: string): Promise<any>
-    {
-        if (!Utils.defined(Server.mailer)){
-            throw new Error("You need to call configure method first");
-        }
 
-        const mailOptions: nodemailer.SendMailOptions = {
-            from: process.env.MAIL_SENDER,
-            to: to,
-            subject: subject,
-            html: content
-        };
-        let result = null;
-        try {
-            result = await Server.mailer.sendMail(mailOptions);
-        }catch(e){
-            console.error("Sending mail error: ", e);
-            return false;
-        }
-
-        return result;
-    }
 
     /**
      * Register a new controller in the routing queue
@@ -170,13 +95,12 @@ export default class Server
      */
     public static listen()
     {
-
          Server.app.listen(process.env.PORT, () => {
             return console.log(`Express is listening at http://localhost:${process.env.PORT}`);
         });
 
         Server.app.get('/', (req, res) => {
-            if (Server.user === null){
+            if (!Utils.defined(req.user) || req.user === null){
                 res.redirect('/login');
             }else {
                 res.redirect('/home');
@@ -186,8 +110,6 @@ export default class Server
         for(let controller of Server.controllers){
             controller.register();
         }
-
-
 
     }
 
