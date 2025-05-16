@@ -5,6 +5,8 @@ html
         style.
             .link { font-weight: bold; font-size: 22px; }
     body
+        p
+            strong The following link is valid 30 minutes
         p.link
             - var shownUrl = typeof url !== typeof void(0) ? url : '/#error';
             a(href="!{shownUrl}" target="_blank") Click here to connect
