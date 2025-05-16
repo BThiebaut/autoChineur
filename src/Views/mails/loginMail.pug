@@ -3,7 +3,8 @@ html
     head
         meta(charset='utf-8')
         style.
-            .text-center { text-align: center; }
+            .link { font-weight: bold; font-size: 22px; }
     body
-        p.text-center
-            a(href="#{url}" target="_blank") Click here to connect
+        p.link
+            - var shownUrl = typeof url !== typeof void(0) ? url : '/#error';
+            a(href="!{shownUrl}" target="_blank") Click here to connect
