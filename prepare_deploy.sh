@@ -1,6 +1,7 @@
-#!/usr/bin
+#!/bin/bash
+
 set -e
-git switch -c prod
+git switch prod
 git rebase develop
 git push
 git switch develop
