@@ -19,7 +19,7 @@ export function initPassport(app: Express) {
     passport.use('local-jwt', new JwtStrategy.Strategy({
         secretOrKey : process.env.TOKEN_SECRET,
         jwtFromRequest : (req) => {
-            return req.params.token;
+            return req.query.token;
         }
     }, async (data, done) => {
         const prisma = new PrismaClient();

@@ -60,7 +60,7 @@ export default class Server
         Server.app.set('view engine', 'pug');
         Server.app.use(express.static(__dirname + "/Resources/css"));
         Server.app.use(express.static(__dirname + "/Resources/lib"));
-        Server.app.use(express.static(__dirname + "/Resources/fonts"));
+        Server.app.use('/fonts', express.static(__dirname + "/Resources/fonts"));
         Server.app.use(bodyParser.json());
         Server.app.use(express.urlencoded({ extended: true }));
         Server.app.use(passport.initialize());

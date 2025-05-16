@@ -50,7 +50,7 @@ export default class MailService {
         };
         const mailService = new MailService();
         const token = jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
-        const url = `${Server.http.protocol}://${Server.http.host}/login?token=${token}`;
+        const url = `${Server.http.protocol}://${Server.http.host}/jwt-login?token=${token}`;
         const content = pug.renderFile( __dirname + '/../Views/mails/loginMail.pug', {
             url: url
         });
