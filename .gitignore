@@ -5,3 +5,4 @@ prisma/db
 prisma/prisma
 dist
 id_ben*
+db
